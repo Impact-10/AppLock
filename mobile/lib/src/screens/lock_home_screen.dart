@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/activity_tile.dart';
+import '../services/storage_service.dart';
+import 'activity_upload_screen.dart';
 
 final activitiesProvider = StateProvider<List<ActivityStatus>>((ref) {
-  return List.generate(4, (i) => ActivityStatus(index: i + 1));
+  final storage = StorageService();
+  // Initialize if needed (in main flow this should be called earlier)
+  // For safety:
+  storage.init();
+  return List.generate(4, (i) {
+    final statusStr = storage.getActivityStatus(i + 1);
+    final status = switch (statusStr) {
+      'verified' => VerificationStatus.verified,
+      'pending' => VerificationStatus.pending,
+      _ => VerificationStatus.locked,
+    };
+    return ActivityStatus(index: i + 1, status: status);
+  });
 });
 
 class LockHomeScreen extends ConsumerWidget {
@@ -49,15 +63,4 @@ class LockHomeScreen extends ConsumerWidget {
   }
 }
 
-class ActivityUploadScreen extends StatelessWidget {
-  final int index;
-  const ActivityUploadScreen({super.key, required this.index});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Activity $index')),
-      body: const Center(child: Text('Upload screen stub — camera/gallery')),
-    );
-  }
-}
+// ActivityUploadScreen moved to its file (activity_upload_screen.dart)

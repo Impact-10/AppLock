@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/ai_verification_service.dart';
+import '../services/storage_service.dart';
+import '../widgets/activity_tile.dart';
 import 'lock_home_screen.dart';
 
 class ActivityUploadScreen extends ConsumerStatefulWidget {
@@ -23,6 +25,8 @@ class _ActivityUploadScreenState extends ConsumerState<ActivityUploadScreen> {
     final picked = await picker.pickImage(source: src, imageQuality: 85);
     if (picked != null) {
       setState(() => _image = File(picked.path));
+      // Persist upload locally
+      await StorageService().saveUpload(widget.index, picked.path);
     }
   }
 
@@ -36,6 +40,8 @@ class _ActivityUploadScreenState extends ConsumerState<ActivityUploadScreen> {
     final result = await ai.verifyImage('task_${widget.index}', _image!);
     setState(() => _verifying = false);
     if (result.pass) {
+      // Persist verified status
+      await StorageService().setActivityStatus(widget.index, 'verified');
       final activities = ref.read(activitiesProvider.notifier);
       final list = [...ref.read(activitiesProvider)];
       list[widget.index - 1] = list[widget.index - 1].copyWith(status: VerificationStatus.verified);
@@ -46,6 +52,7 @@ class _ActivityUploadScreenState extends ConsumerState<ActivityUploadScreen> {
         if (mounted) Navigator.pop(context);
       }
     } else {
+      await StorageService().setActivityStatus(widget.index, 'pending');
       setState(() => _message = 'Verification failed. Please re-upload.');
     }
   }

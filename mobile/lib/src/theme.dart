@@ -19,7 +19,7 @@ ThemeData buildTheme() {
       primary: primary,
       secondary: accent,
       error: error,
-      background: bg,
+      surface: bg,
     ),
     textTheme: textTheme,
     appBarTheme: const AppBarTheme(
@@ -27,7 +27,7 @@ ThemeData buildTheme() {
       backgroundColor: Colors.white,
       foregroundColor: Colors.black87,
     ),
-    cardTheme: const CardTheme(
+    cardTheme: CardThemeData(
       color: Colors.white,
       elevation: 1,
       shape: RoundedRectangleBorder(
