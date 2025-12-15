@@ -6,8 +6,6 @@ import 'activity_upload_screen.dart';
 
 final activitiesProvider = StateProvider<List<ActivityStatus>>((ref) {
   final storage = StorageService();
-  // Initialize if needed (in main flow this should be called earlier)
-  // For safety:
   storage.init();
   return List.generate(4, (i) {
     final statusStr = storage.getActivityStatus(i + 1);

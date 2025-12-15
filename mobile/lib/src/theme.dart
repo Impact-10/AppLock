@@ -27,7 +27,7 @@ ThemeData buildTheme() {
       backgroundColor: Colors.white,
       foregroundColor: Colors.black87,
     ),
-    cardTheme: CardThemeData(
+    cardTheme: const CardThemeData(
       color: Colors.white,
       elevation: 1,
       shape: RoundedRectangleBorder(

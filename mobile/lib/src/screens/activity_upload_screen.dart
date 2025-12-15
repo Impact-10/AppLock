@@ -25,7 +25,6 @@ class _ActivityUploadScreenState extends ConsumerState<ActivityUploadScreen> {
     final picked = await picker.pickImage(source: src, imageQuality: 85);
     if (picked != null) {
       setState(() => _image = File(picked.path));
-      // Persist upload locally
       await StorageService().saveUpload(widget.index, picked.path);
     }
   }
@@ -40,7 +39,6 @@ class _ActivityUploadScreenState extends ConsumerState<ActivityUploadScreen> {
     final result = await ai.verifyImage('task_${widget.index}', _image!);
     setState(() => _verifying = false);
     if (result.pass) {
-      // Persist verified status
       await StorageService().setActivityStatus(widget.index, 'verified');
       final activities = ref.read(activitiesProvider.notifier);
       final list = [...ref.read(activitiesProvider)];
