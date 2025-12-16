@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../services/storage_service.dart';
 
 final activitiesProvider = StateProvider<List<ActivityStatus>>((ref) => []);
 
@@ -94,6 +93,7 @@ class _UserActivitiesScreenState extends ConsumerState<UserActivitiesScreen> {
         _loadActivities();
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }

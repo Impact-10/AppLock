@@ -12,7 +12,8 @@ final activitiesProvider = StateProvider<List<ActivityStatus>>((ref) {
   return List.generate(4, (i) {
     final statusStr = storage.getActivityStatus(i + 1);
     final status = switch (statusStr) {
-      'verified' => VerificationStatus.verified,
+      'verified' => VerificationStatus.completed,
+      'completed' => VerificationStatus.completed,
       'pending' => VerificationStatus.pending,
       _ => VerificationStatus.locked,
     };
@@ -56,7 +57,7 @@ class LockHomeScreen extends ConsumerWidget {
           itemBuilder: (context, i) {
             final enabled = i == 0
                 ? true
-                : activities[i - 1].status == VerificationStatus.verified;
+                : activities[i - 1].status == VerificationStatus.completed;
             return ActivityTile(
               status: activities[i],
               enabled: enabled,

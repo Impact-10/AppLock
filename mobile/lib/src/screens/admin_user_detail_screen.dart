@@ -30,6 +30,7 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
       final data = doc.data()?['activities'] as List? ?? [];
       setState(() { activities = data.cast<Map<String, dynamic>>().toList(); });
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     } finally {
       if (mounted) setState(() { loadingActivities = false; });
@@ -51,9 +52,10 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
         SetOptions(merge: true),
       );
       newActivityCtrl.clear();
-      setState(() {});
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Activity added')));
+      if (mounted) setState(() {});
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Activity added')));
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
@@ -66,8 +68,9 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
         { 'isLocked': true, 'lastUnlockedDate': null, 'updatedAt': FieldValue.serverTimestamp() },
         SetOptions(merge: true),
       );
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('User locked')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('User locked')));
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
@@ -80,8 +83,9 @@ class _AdminUserDetailScreenState extends State<AdminUserDetailScreen> {
         { 'isLocked': false, 'lastUnlockedDate': Timestamp.now(), 'updatedAt': FieldValue.serverTimestamp() },
         SetOptions(merge: true),
       );
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('User unlocked')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('User unlocked')));
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }

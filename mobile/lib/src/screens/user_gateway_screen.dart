@@ -28,8 +28,11 @@ class _UserGatewayScreenState extends State<UserGatewayScreen> {
       if (adminId == null) return;
       final userDoc = await FirebaseFirestore.instance.collection('admins').doc(adminId).collection('users').doc(uid).get();
       final data = userDoc.data() ?? {};
-      final apps = (data['selectedApps'] as List?)?.cast<Map>() ?? <Map>[];
-      setState(() { selectedApps = apps.cast<String, dynamic>().toList(); loading = false; });
+      final apps = (data['selectedApps'] as List?)?.cast<Map<dynamic, dynamic>>() ?? <Map<dynamic, dynamic>>[];
+      setState(() {
+        selectedApps = apps.map((e) => Map<String, dynamic>.from(e)).toList();
+        loading = false;
+      });
     } catch (e) {
       setState(() { loading = false; });
     }
@@ -76,7 +79,7 @@ class _UserGatewayScreenState extends State<UserGatewayScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.apps, size: 32),
+                            const Icon(Icons.apps, size: 32),
                             const SizedBox(height: 8),
                             Text(app['label'] ?? 'App', textAlign: TextAlign.center, style: const TextStyle(fontSize: 12)),
                           ],

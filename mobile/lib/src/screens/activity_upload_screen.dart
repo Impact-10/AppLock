@@ -42,12 +42,12 @@ class _ActivityUploadScreenState extends ConsumerState<ActivityUploadScreen> {
     final result = await ai.verifyImage('task_${widget.index}', _image!);
     setState(() => _verifying = false);
     if (result.pass) {
-      await StorageService().setActivityStatus(widget.index, 'verified');
+      await StorageService().setActivityStatus(widget.index, 'completed');
       // Update backend status
       await _updateActivityStatusRemote();
       final activities = ref.read(activitiesProvider.notifier);
       final list = [...ref.read(activitiesProvider)];
-      list[widget.index - 1] = list[widget.index - 1].copyWith(status: VerificationStatus.verified);
+      list[widget.index - 1] = list[widget.index - 1].copyWith(status: VerificationStatus.completed);
       activities.state = list;
       if (widget.index == 4) {
         await _markAllowedTodayIfAllComplete();
