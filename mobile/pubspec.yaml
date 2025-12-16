@@ -1,5 +1,5 @@
 name: activity_locker_mvp
-description: Flutter MVP skeleton for Activity Locker
+description: Flutter app-locker with gateway model. Firebase-based user/admin control.
 publish_to: 'none'
 version: 0.1.0
 
@@ -12,16 +12,14 @@ dependencies:
   cupertino_icons: ^1.0.6
   flutter_riverpod: ^2.5.1
   image_picker: ^1.1.2
-  camera: ^0.10.6
-  google_mlkit_image_labeling: ^0.10.0
-  dio: ^5.7.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  flutter_local_notifications: ^17.2.1
   flutter_secure_storage: ^9.2.2
-
-  # fonts
+  shared_preferences: ^2.3.2
   google_fonts: ^6.2.1
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.0
+  cloud_firestore: ^5.4.4
 
 dev_dependencies:
   flutter_test:

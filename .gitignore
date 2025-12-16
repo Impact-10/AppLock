@@ -1,0 +1,42 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors/IDE
+.vscode/
+.idea/
+
+# Environment / secrets (provide via local files or CI variables)
+.env
+.env.*
+
+# Firebase local state
+.firebase/
+firebase-debug.log
+
+# Node / Functions
+node_modules/
+functions/node_modules/
+functions/lib/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Flutter / Dart (top-level catch; mobile/ has its own .gitignore)
+mobile/build/
+mobile/.dart_tool/
+mobile/.pub-cache/
+mobile/.packages
+
+# Android / iOS build outputs (top-level catch)
+**/DerivedData/
+**/Pods/
+**/Podfile.lock
+**/Runner.xcworkspace/
+**/Flutter/ephemeral/
+
+# Misc
+*.log
+*.tmp
+*.swp

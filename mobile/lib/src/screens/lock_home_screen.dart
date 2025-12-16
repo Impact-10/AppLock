@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/activity_tile.dart';
 import '../services/storage_service.dart';
+import '../services/native_channel_service.dart';
 import 'activity_upload_screen.dart';
 
 final activitiesProvider = StateProvider<List<ActivityStatus>>((ref) {
@@ -29,9 +31,20 @@ class LockHomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Activity Locker'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.admin_panel_settings),
-            onPressed: () => Navigator.pushNamed(context, '/admin'),
+          PopupMenuButton<String>(
+            onSelected: (val) async {
+              if (val == 'logout') {
+                // Safety logout: disable enforcement and sign out
+                try { await NativeChannelService().stopEnforcement(); } catch (_) {}
+                await FirebaseAuth.instance.signOut();
+                if (context.mounted) {
+                  Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
+                }
+              }
+            },
+            itemBuilder: (ctx) => [
+              const PopupMenuItem(value: 'logout', child: Text('Logout')),
+            ],
           )
         ],
       ),
@@ -56,6 +69,11 @@ class LockHomeScreen extends ConsumerWidget {
             );
           },
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.pushNamed(context, '/user/setup'),
+        icon: const Icon(Icons.lock_outline),
+        label: const Text('Edit locked apps'),
       ),
     );
   }

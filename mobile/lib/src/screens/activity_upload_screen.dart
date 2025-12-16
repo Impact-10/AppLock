@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/ai_verification_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/enforcement_cache_service.dart';
 import '../services/storage_service.dart';
 import '../widgets/activity_tile.dart';
 import 'lock_home_screen.dart';
@@ -40,11 +43,14 @@ class _ActivityUploadScreenState extends ConsumerState<ActivityUploadScreen> {
     setState(() => _verifying = false);
     if (result.pass) {
       await StorageService().setActivityStatus(widget.index, 'verified');
+      // Update backend status
+      await _updateActivityStatusRemote();
       final activities = ref.read(activitiesProvider.notifier);
       final list = [...ref.read(activitiesProvider)];
       list[widget.index - 1] = list[widget.index - 1].copyWith(status: VerificationStatus.verified);
       activities.state = list;
       if (widget.index == 4) {
+        await _markAllowedTodayIfAllComplete();
         if (mounted) Navigator.pushReplacementNamed(context, '/result');
       } else {
         if (mounted) Navigator.pop(context);
@@ -53,6 +59,34 @@ class _ActivityUploadScreenState extends ConsumerState<ActivityUploadScreen> {
       await StorageService().setActivityStatus(widget.index, 'pending');
       setState(() => _message = 'Verification failed. Please re-upload.');
     }
+  }
+
+  Future<void> _updateActivityStatusRemote() async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return;
+      final prof = await FirebaseFirestore.instance.collection('userProfiles').doc(uid).get();
+      final adminId = prof.data()?['adminId'] as String?;
+      if (adminId == null) return;
+      final userRef = FirebaseFirestore.instance.collection('admins').doc(adminId).collection('users').doc(uid);
+      final doc = await userRef.get();
+      final activities = (doc.data()?['activities'] as List? ?? List.generate(4, (_) => {'status': 'locked'}));
+      activities[widget.index - 1] = {'status': 'completed'};
+      await userRef.set({'activities': activities, 'updatedAt': FieldValue.serverTimestamp()}, SetOptions(merge: true));
+    } catch (_) {}
+  }
+
+  Future<void> _markAllowedTodayIfAllComplete() async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return;
+      final prof = await FirebaseFirestore.instance.collection('userProfiles').doc(uid).get();
+      final adminId = prof.data()?['adminId'] as String?;
+      if (adminId == null) return;
+      final userRef = FirebaseFirestore.instance.collection('admins').doc(adminId).collection('users').doc(uid);
+      await userRef.set({'allowedToday': true, 'lockStatus': 'unlocked'}, SetOptions(merge: true));
+      await EnforcementCacheService().refreshFromFirestore();
+    } catch (_) {}
   }
 
   @override

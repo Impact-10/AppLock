@@ -7,7 +7,7 @@ ThemeData buildTheme() {
   const error = Color(0xFFFF4D4F);
   const bg = Color(0xFFF7F9FC);
 
-  final textTheme = GoogleFonts.interTextTheme().apply(
+  final textTheme = GoogleFonts.poppinsTextTheme().apply(
     bodyColor: Colors.black87,
     displayColor: Colors.black87,
   );

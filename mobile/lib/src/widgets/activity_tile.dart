@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum VerificationStatus { locked, pending, verified }
+enum VerificationStatus { locked, pending, completed }
 
 class ActivityStatus {
   final int index;
@@ -12,13 +12,13 @@ class ActivityStatus {
 class ActivityTile extends StatelessWidget {
   final ActivityStatus status;
   final bool enabled;
-  final VoidCallback onTap;
-  const ActivityTile({super.key, required this.status, required this.enabled, required this.onTap});
+  final VoidCallback? onTap;
+  const ActivityTile({super.key, required this.status, required this.enabled, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final color = status.status == VerificationStatus.verified ? const Color(0xFF00C48C) : Colors.grey;
-    final icon = status.status == VerificationStatus.verified ? Icons.check_circle : Icons.lock_clock;
+    final color = status.status == VerificationStatus.completed ? const Color(0xFF00C48C) : Colors.grey;
+    final icon = status.status == VerificationStatus.completed ? Icons.check_circle : Icons.lock_clock;
     return Opacity(
       opacity: enabled ? 1.0 : 0.5,
       child: Card(
@@ -36,11 +36,12 @@ class ActivityTile extends StatelessWidget {
   String _subtitle() {
     switch (status.status) {
       case VerificationStatus.locked:
-        return 'Locked — upload required';
+        return 'Locked — take photo';
       case VerificationStatus.pending:
-        return 'Pending verification';
-      case VerificationStatus.verified:
-        return 'Verified';
+        return 'Pending review';
+      case VerificationStatus.completed:
+        return 'Completed';
     }
   }
 }
+
