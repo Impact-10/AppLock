@@ -29,6 +29,10 @@ mobile/.dart_tool/
 mobile/.pub-cache/
 mobile/.packages
 
+# Mobile app secrets (never commit Firebase client configs)
+mobile/android/app/google-services.json
+mobile/ios/Runner/GoogleService-Info.plist
+
 # Android / iOS build outputs (top-level catch)
 **/DerivedData/
 **/Pods/

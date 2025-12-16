@@ -30,6 +30,8 @@ flutter pub get
 flutterfire configure  # Generates firebase_options.dart from google-services.json
 ```
 
+Note: Do not commit `android/app/google-services.json` or `ios/Runner/GoogleService-Info.plist`. They are gitignored and should remain local. If they were accidentally pushed, rotate the key(s) and see SECURITY.md.
+
 ### Run
 ```bash
 flutter run -d android  # or iOS
